@@ -8,8 +8,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/logger"
-	"github.com/markusryoti/next-js-go-auth/auth"
-	"github.com/markusryoti/next-js-go-auth/store"
+	"github.com/markusryoti/next-js-go-auth/internal/auth"
 )
 
 type RegisterCmd struct {
@@ -40,12 +39,12 @@ func main() {
 			return err
 		}
 
-		tokens, err := auth.RegisterUser(cmd.Email, cmd.Password)
+		tokenRes, err := auth.RegisterUser(cmd.Email, cmd.Password)
 		if err != nil {
 			return err
 		}
 
-		return c.JSON(tokens)
+		return c.JSON(tokenRes)
 	})
 
 	app.Post("/login", func(c fiber.Ctx) error {
@@ -56,12 +55,12 @@ func main() {
 			return err
 		}
 
-		tokens, err := auth.LoginUser(cmd.Email, cmd.Password)
+		tokenRes, err := auth.LoginUser(cmd.Email, cmd.Password)
 		if err != nil {
 			return err
 		}
 
-		return c.JSON(tokens)
+		return c.JSON(tokenRes)
 	})
 
 	app.Get("/current-user", func(c fiber.Ctx) error {
@@ -70,12 +69,23 @@ func main() {
 			return err
 		}
 
-		user, err := store.SessionStore.GetSession(sessionId)
+		currentUserResponse, err := auth.GetCurrentUser(sessionId)
 		if err != nil {
 			return err
 		}
 
-		return c.JSON(user)
+		return c.JSON(currentUserResponse)
+	}, authenticated)
+
+	app.Get("/logout", func(c fiber.Ctx) error {
+		sessionId, err := getSessionId(c)
+		if err != nil {
+			return err
+		}
+
+		auth.Logout(sessionId)
+
+		return c.SendString("ok")
 	}, authenticated)
 
 	log.Fatal(app.Listen(":5000"))

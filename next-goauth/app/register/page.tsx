@@ -5,16 +5,31 @@ export default function Register() {
     <div>
       <h1 className="text-5xl mb-8">Register</h1>
       <form action={register} className="flex flex-col gap-4">
-        <div className="">
-          <label htmlFor="email">Email</label>
-          <input name="email" type="text" className="border h-8 w-96" />
+        <div className="flex flex-col">
+          <label htmlFor="email" className="text-gray-700 px-4 py-2">
+            Email
+          </label>
+          <input
+            name="email"
+            type="email"
+            className="border w-96 p-4 h-12 rounded-xl"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="password" className="text-gray-700 px-4 py-2">
+            Password
+          </label>
+          <input
+            name="password"
+            type="password"
+            className="border w-96 p-4 h-12 rounded-xl"
+          />
         </div>
         <div>
-          <label htmlFor="password">Password</label>
-          <input name="password" type="password" className="border h-8 w-96" />
-        </div>
-        <div>
-          <button type="submit" className="bg-slate-500 text-white p-4">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white p-4 rounded-xl"
+          >
             Submit
           </button>
         </div>

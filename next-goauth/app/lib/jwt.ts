@@ -17,8 +17,3 @@ export async function verifyToken(rawToken: string) {
 
   return { session, expiresAt };
 }
-
-export async function signToken(session: string) {
-  const token = jwt.sign({ session }, secret);
-  return token;
-}

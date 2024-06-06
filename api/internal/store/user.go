@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/markusryoti/next-js-go-auth/internal"
 )
 
 var (
@@ -12,29 +13,24 @@ var (
 
 var UserStore = newUserStore()
 
-type User struct {
-	Id             string `json:"id"`
-	Email          string `json:"email"`
-	HashedPassword string `json:"-"`
-}
-
 func newUserStore() *userStore {
 	return &userStore{
-		users: make(map[string]*User),
+		users: make(map[string]*internal.User),
 	}
 }
 
 type userStore struct {
-	users map[string]*User
+	users map[string]*internal.User
 }
 
-func (us *userStore) SaveUser(email, hashedPassword string) (*User, error) {
+func (us *userStore) SaveUser(email, hashedPassword, salt string) (*internal.User, error) {
 	id := uuid.NewString()
 
-	u := &User{
+	u := &internal.User{
 		Id:             id,
 		Email:          email,
 		HashedPassword: hashedPassword,
+		Salt:           salt,
 	}
 
 	us.users[u.Id] = u
@@ -42,7 +38,7 @@ func (us *userStore) SaveUser(email, hashedPassword string) (*User, error) {
 	return u, nil
 }
 
-func (us *userStore) GetUserById(id string) (*User, error) {
+func (us *userStore) GetUserById(id string) (*internal.User, error) {
 	for _, u := range us.users {
 		if u.Id == id {
 			return u, nil
@@ -52,7 +48,7 @@ func (us *userStore) GetUserById(id string) (*User, error) {
 	return nil, ErrUserNotFound
 }
 
-func (us *userStore) GetUserByEmail(email string) (*User, error) {
+func (us *userStore) GetUserByEmail(email string) (*internal.User, error) {
 	for _, u := range us.users {
 		if u.Email == email {
 			return u, nil
